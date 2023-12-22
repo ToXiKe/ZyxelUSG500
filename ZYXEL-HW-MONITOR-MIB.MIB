@@ -1,0 +1,154 @@
+-- ZyXEL Communications Corporation
+-- Private Enterprise MIB definition 
+  
+-- This file describes the ZyXEL Communications Corporation Enterprise MIB.
+-- It contains ZyXEL products OIDs, and common managed objects.
+
+-- ZYXEL-HW-MONITOR-MIB.mib
+-- Revision 1.10  2016/02/24 
+
+ZYXEL-HW-MONITOR-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+	OBJECT-TYPE
+		FROM SNMPv2-SMI			-- RFC2578	
+		
+	MODULE-IDENTITY
+		FROM SNMPv2-SMI
+		
+	DisplayString                                          
+	  FROM SNMPv2-TC
+
+	NOTIFICATION-TYPE
+		FROM SNMPv2-SMI
+
+	esMgmt			
+		FROM ZYXEL-ES-SMI;
+
+	zyxelHwMonitor MODULE-IDENTITY
+		LAST-UPDATED	"201207010000Z"    
+		ORGANIZATION "Enterprise Solution ZyXEL"     
+		CONTACT-INFO
+			""	   
+		DESCRIPTION
+			"The subtree for hardware monitor"
+		::= { esMgmt 26 }
+
+	zyxelHwMonitorStatus 			OBJECT IDENTIFIER ::= { zyxelHwMonitor 1 }		
+	zyxelHwMonitorNotifications 	OBJECT IDENTIFIER ::= { zyxelHwMonitor 2 }
+
+--  26.HwMonitor
+
+-- 		fanRpmTable
+	
+        zyxelHwMonitorFanRpmTable	OBJECT-TYPE
+        SYNTAX	SEQUENCE OF ZyxelHwMonitorFanRpmEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+        "The table contains HW monitor fan information."
+        ::= { zyxelHwMonitorStatus 1 }
+        
+		zyxelHwMonitorFanRpmEntry OBJECT-TYPE
+        SYNTAX	ZyxelHwMonitorFanRpmEntry
+        MAX-ACCESS	not-accessible
+        STATUS	current
+        DESCRIPTION    	
+		"An entry contains HW monitor fan information."
+        INDEX          	{ zyHwMonitorFanRpmIndex }
+        ::= { zyxelHwMonitorFanRpmTable 1 }
+
+        ZyxelHwMonitorFanRpmEntry ::=
+           SEQUENCE {
+        	zyHwMonitorFanRpmIndex			INTEGER,
+        	zyHwMonitorFanRpmDescription	DisplayString,
+        	zyHwMonitorFanRpmCurrentValue	INTEGER
+           }
+
+        zyHwMonitorFanRpmIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+        "Index of fan."
+        ::= { zyxelHwMonitorFanRpmEntry 1 }
+        
+        zyHwMonitorFanRpmDescription OBJECT-TYPE
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+		"Fan Description"
+        ::= { zyxelHwMonitorFanRpmEntry 2 }
+
+        zyHwMonitorFanRpmCurrentValue OBJECT-TYPE
+        SYNTAX  INTEGER
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+        "Current speed in Revolutions Per Minute (RPM) on the fan."
+        ::= { zyxelHwMonitorFanRpmEntry 3 }
+
+-- 		tempTable
+
+        zyxelHwMonitorTemperatureTable	OBJECT-TYPE
+        SYNTAX	SEQUENCE OF ZyxelHwMonitorTemperatureEntry
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+        "The table contains HW monitor temperature information."
+        ::= { zyxelHwMonitorStatus 2 }
+        
+		zyxelHwMonitorTemperatureEntry OBJECT-TYPE
+        SYNTAX	ZyxelHwMonitorTemperatureEntry
+        MAX-ACCESS	not-accessible
+        STATUS	current
+        DESCRIPTION    	
+		"An entry contains HW temperature information."
+        INDEX          	{ zyHwMonitorTemperatureIndex }
+        ::= { zyxelHwMonitorTemperatureTable 1 }
+
+        ZyxelHwMonitorTemperatureEntry ::=
+           SEQUENCE {
+        	zyHwMonitorTemperatureIndex			INTEGER,
+        	zyHwMonitorTemperatureDescription	DisplayString,
+        	zyHwMonitorTemperatureCurrentValue	INTEGER
+           }
+
+        zyHwMonitorTemperatureIndex OBJECT-TYPE
+        SYNTAX  INTEGER 
+        MAX-ACCESS  not-accessible
+        STATUS  current
+        DESCRIPTION
+        "Index of temperature unit."
+        ::= { zyxelHwMonitorTemperatureEntry 1 }
+        
+        zyHwMonitorTemperatureDescription OBJECT-TYPE
+        SYNTAX  DisplayString
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+        "Temperature Description"
+        ::= { zyxelHwMonitorTemperatureEntry 2 }
+        
+
+        zyHwMonitorTemperatureCurrentValue OBJECT-TYPE
+        SYNTAX  INTEGER
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+        "The current temperature measured at this sensor."
+        ::= { zyxelHwMonitorTemperatureEntry 3 }
+	
+		zyHwMonitorTemperatureOutOfRange NOTIFICATION-TYPE
+           OBJECTS {
+				zyHwMonitorTemperatureIndex,
+				zyHwMonitorTemperatureDescription
+           }
+                
+	    STATUS  current
+        DESCRIPTION
+        "Temperature is out of the normal operation range."
+        ::= { zyxelHwMonitorNotifications 2 }
+		
+ END
+
